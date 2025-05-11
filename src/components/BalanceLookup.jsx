@@ -10,27 +10,31 @@ export default function BalanceLookup() {
     try {
       const pk = new PublicKey(addr);
       const lam = await connection.getBalance(pk);
-      setBal(lam / 1e9);
+      setBal((lam / 1e9).toFixed(9));  // formatăm la 9 zecimale
     } catch {
       setBal('Adresă invalidă');
     }
   }
 
   return (
-    <div className="border p-4 rounded space-y-2">
-      <input
-        className="border p-1 w-full"
-        placeholder="PublicKey Solana"
-        value={addr}
-        onChange={e => setAddr(e.target.value)}
-      />
-      <button
-        className="px-3 py-1 bg-blue-500 text-white rounded"
-        onClick={onCheck}
-      >
-        Verifică balanța
-      </button>
-      {bal !== null && <p>Balanță: {bal} SOL</p>}
+    <div className="balance-lookup">
+      <div className="lookup-controls">
+        <input
+          className="input-public-key"
+          placeholder="PublicKey Solana"
+          value={addr}
+          onChange={e => setAddr(e.target.value)}
+        />
+        <button className="unit-toggle" onClick={onCheck}>
+          Verifică balanța
+        </button>
+      </div>
+
+      {bal !== null && (
+        <p className="lookup-result">
+          Balanță: {bal} SOL
+        </p>
+      )}
     </div>
   );
 }

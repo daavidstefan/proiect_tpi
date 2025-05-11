@@ -1,276 +1,275 @@
-/* index.css */
+/* index.css – varianta îmbunătățită */
 
+/* Root variables */
 :root {
-  /* Fonturi & culori principale */
   --font-sans: "Inter", system-ui, Avenir, Helvetica, Arial, sans-serif;
   --bg-dark: #121212;
+  --bg: #0f0f0f;
   --bg-card: #1e1e1e;
   --text-primary: #e0e0e0;
   --text-secondary: #a0a0a0;
   --accent: #00ffa3;
   --hover-row: rgba(0, 255, 163, 0.1);
-  --border-radius: 8px;
-
-  color-scheme: light dark;
+  --border-radius: 10px;
+  --transition-fast: 0.15s ease-in-out;
 }
 
 body {
   margin: 0;
-  background: linear-gradient(135deg, #0f0f0f, #1c1c1c);
+  background: linear-gradient(
+    to bottom,
+    #1c1c1c 0%,       /* păstrează gris în partea de sus până la */
+    #1c1c1c 40%,      /* 40% din înălțime */
+    var(--accent) 100%/* apoi trecere graduală spre verde până jos */
+  );
   color: var(--text-primary);
   font-family: var(--font-sans);
-  line-height: 1.5;
-  font-weight: 400;
-  text-rendering: optimizeLegibility;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
-
-/* --- Layout principal --- */
+/* Layout */
 .app-container {
   display: flex;
   flex-direction: column;
   height: 100vh;
 }
-
 .app-header {
   flex: 0 0 auto;
   background: var(--bg-card);
-  color: var(--text-primary);
   padding: 1rem 2rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-  border-radius: var(--border-radius);
+  border-radius: var(--border-radius) var(--border-radius) 0 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.5);
 }
-
 .app-title {
-  margin: 0 0 0.5rem;
-  font-size: 1.75rem;
+  margin: 0;
+  font-size: 1.8rem;
   color: var(--accent);
 }
-
-.app-header > * + * {
-  margin-top: 1rem;
-}
-
 .app-content {
   flex: 1 1 auto;
-  overflow-y: auto;     
-  overflow-x: visible;   
+  overflow-y: visible !important;  /* permit dropdown-ul */
+  overflow-x: hidden;
   background: #111;
-  padding: 1rem 2rem;
+  padding: 1.5rem 2rem;
 }
 
-/* --- Tabel tranzacții --- */
-.table-wrapper {
-  width: 100%;
-  height: 100%;
-  overflow-x: auto;
-  overflow-y: auto;
-  padding-right: 0.5rem;
-  overflow: visible;
-}
-
-table {
-  table-layout: fixed;
-  width: 100%;
-  border-collapse: collapse;
+/* Card + Tabel */
+.table-wrapper.card {
   background: var(--bg-card);
+  border: 1px solid #333;
   border-radius: var(--border-radius);
-  color: var(--text-primary);
-  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+  padding: 1rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
+.table-wrapper.card table {
+  flex: 1 1 auto;
+  background: transparent;
+  border-radius: inherit;
+  overflow: hidden;
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+  color: var(--text-primary);
+}
+
+/* Head */
 thead th {
   position: sticky;
   top: 0;
-  background: #252525;
+  background: rgba(37,37,37,0.95);
   padding: 0.75rem 1rem;
-  font-size: 0.9rem;
-  text-transform: uppercase;
+  font-size: 0.85rem;
   letter-spacing: 0.03em;
-  color: var(--text-primary);
-  border-top: 1px solid #333;
+  text-transform: uppercase;
   border-bottom: 1px solid #333;
+  z-index: 10;
 }
 
+/* Celule */
 th, td {
   padding: 0.75rem 1rem;
   border-bottom: 1px solid #333;
-  text-align: left;
   white-space: nowrap;
+  font-size: 0.9rem;
 }
-
 tbody tr:nth-child(odd) {
   background: #1a1a1a;
 }
-
 tbody tr:hover {
   background: var(--hover-row);
 }
 
-.table-wrapper,
-.app-content {
-  /* pentru IE10+ */
-  -ms-overflow-style: none;
-  /* pentru Firefox */
-  scrollbar-width: 2px;
+/* Pill & Butoane */
+.unit-toggle,
+.btn-check {
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.2rem 0.5rem;
+  border: none;
+  border-radius: var(--border-radius);
+  background: linear-gradient(135deg, #00ffa3, #1effc3);
+  color: var(--bg-dark);
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,255,163,0.4);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast);
+}
+.unit-toggle:hover,
+.btn-check:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0,255,163,0.6);
+  background: linear-gradient(135deg, #1effc3, #00ffa3);
 }
 
-/* pentru Chrome, Safari, Opera */
+/* Scrollbar invizibil */
+.table-wrapper,
+.app-content {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
 .table-wrapper::-webkit-scrollbar,
 .app-content::-webkit-scrollbar {
   display: none;
 }
 
-.table-wrapper > table {
-  background: transparent;     /* ca fundalul din .card să fie vizibil */
-  border-radius: inherit;      /* păstrează colțurile rotunjite ale wrapper-ului */
-}
-
-/* Buton verifică balanța */
-.btn-check {
-  background: var(--accent);
-  color: var(--bg-card);
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: var(--border-radius);
-  cursor: pointer;
-  font-weight: 600;
-  transition: background 0.2s ease;
-}
-
-.btn-check:hover {
-  background: #00e493;
-}
-
-/* Hover pe adrese/semi-siguri */
+/* Link-uri & rânduri clicabile */
 .address:hover {
   color: var(--accent);
-  cursor: pointer;
+  text-decoration: underline;
 }
-
-.unit-toggle {
-  background: transparent;
-  border: 1px solid var(--accent);
-  border-radius: var(--border-radius);
-  padding: 0.2rem 0.4rem;
-  font-size: 0.75rem;
-  color: var(--accent);
-  cursor: pointer;
-  transition: background 0.2s;
-}
-.unit-toggle:hover {
-  background: var(--accent);
-  color: var(--bg-card);
-}
-
-/* 1. rând clicabil */
 .clickable-row {
   cursor: pointer;
 }
 .clickable-row:hover {
-  background: rgba(0, 255, 163, 0.1);
+  background: rgba(0, 255, 163, 0.15);
 }
 
-/* Overlay full-screen */
+/* Modal */
 .modal-overlay {
   position: fixed;
-  top: 0; left: 0;
-  width: 100vw; height: 100vh;
-  background: rgba(0, 0, 0, 0.6);
+  inset: 0;
+  background: rgba(0,0,0,0.7);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 999;
+  z-index: 100;
 }
-
-/* Modal aproape full-screen */
 .modal-content {
-  background: var(--bg-card);
-  color: var(--text-primary);
   width: 900px;
-  height: 400px;
+  max-height: 90vh;
+  background: var(--bg-card);
   padding: 1.5rem;
   border-radius: var(--border-radius);
   overflow-y: auto;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.8);
 }
-
-/* Titlu */
 .modal-content h3 {
   margin-top: 0;
   color: var(--accent);
 }
-
-/* Spațieri între rânduri */
-.tx-details p,
-.tx-details .balances p {
-  margin: 0.5rem 0;
-}
-
-
-/* Buton Închide */
 .modal-close {
   margin-top: 1.5rem;
   background: var(--accent);
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: var(--border-radius);
   color: var(--bg-dark);
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: var(--border-radius);
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background var(--transition-fast);
 }
 .modal-close:hover {
   background: #00e493;
 }
 
 .col-type {
-  width: 200px;
-  white-space: nowrap;
+  width: 180px;
   overflow: visible;
   text-overflow: ellipsis;
-  padding: 0.5rem;
-  text-align: left;
 }
 
-.dropdown-container {
-  position: relative;
-  display: inline-block;
-  margin-left: 0.5rem;
+/* End of index.css */
+
+
+/* -------------------------------------------- */
+/*  Balance lookup (compact + rezultat dedesubt) */
+
+.balance-lookup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;       /* centrează tot conţinutul pe orizontală */
+  gap: 0.5rem;
+  margin: 1rem auto;         /* adaugă un pic de spaţiu sus/jos şi centrează blocul */
+  /* scot width/max-width ca să nu ocupe 100% din container */
 }
 
-.type-menu {
-  position: absolute;
-  top: 110%;
-  left: 0;
+.lookup-controls {
+  display: flex;
+  gap: 0.5rem;
+  /* justify-content nu mai e necesar, alinierea vine de la părintele .balance-lookup */
+}
+
+.input-public-key {
+  flex: none;                /* dezactivează flex-grow */
+  width: 280px;              /* dimensiune fixă pentru input */
+  padding: 0.4rem 0.8rem;
+  font-size: 0.85rem;
   background: var(--bg-card);
+  color: var(--text-primary);
   border: 1px solid var(--accent);
   border-radius: var(--border-radius);
-  box-shadow: 0 4px 12px rgba(0, 255, 163, 0.3);
-  list-style: none;
+  outline: none;
+  transition: border-color var(--transition-fast),
+              box-shadow  var(--transition-fast);
+}
+
+.lookup-result {
   margin: 0;
-  padding: 0.25rem 0;
-  z-index: 50;
-  min-width: 120px;
+  font-size: 0.9rem;
+  color: var(--accent);
+  text-align: center;        /* centrează textul rezultatul dedesubt */
 }
 
-.type-menu li {
-  padding: 0.5rem 1rem;
-  cursor: pointer;
-  white-space: nowrap;
+/* -------------------------------------------- */
+/*  Block details (stilul site-ului) */
+
+.block-details {
+  padding: 1rem;
+  background: var(--bg-card);
+  border: 1px solid #333;
+  border-radius: var(--border-radius);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  margin-top: 1.5rem; 
+  margin-bottom: 1.5rem;
 }
 
-.type-menu li:hover,
-.type-menu li.active {
-  background: var(--accent);
-  color: var(--bg-dark);
+.block-title {
+  margin: 0 0 0.75rem;
+  font-size: 1.4rem;
+  color: var(--accent);
 }
 
-/* adaugă la finalul index.css */
-.app-content {
-  /* înlocuiește doar pe axis-ul vertical cu visible */
-  overflow-y: visible !important;
+.block-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
 }
 
+.block-info-item {
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
 
+.block-label {
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.block-value {
+  color: var(--text-primary);
+  margin-left: 0.4rem;
+  word-break: break-all;
+}
 
