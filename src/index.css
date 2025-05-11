@@ -54,8 +54,9 @@ body {
 
 .app-content {
   flex: 1 1 auto;
-  overflow: hidden;
-  background: var(--bg-dark);
+  overflow-y: auto;     
+  overflow-x: visible;   
+  background: #111;
   padding: 1rem 2rem;
 }
 
@@ -66,9 +67,11 @@ body {
   overflow-x: auto;
   overflow-y: auto;
   padding-right: 0.5rem;
+  overflow: visible;
 }
 
 table {
+  table-layout: fixed;
   width: 100%;
   border-collapse: collapse;
   background: var(--bg-card);
@@ -105,14 +108,23 @@ tbody tr:hover {
   background: var(--hover-row);
 }
 
-/* Scrollbar customizat */
-.table-wrapper::-webkit-scrollbar {
-  width: 8px;
+.table-wrapper,
+.app-content {
+  /* pentru IE10+ */
+  -ms-overflow-style: none;
+  /* pentru Firefox */
+  scrollbar-width: 2px;
 }
 
-.table-wrapper::-webkit-scrollbar-thumb {
-  background: rgba(0, 255, 163, 0.3);
-  border-radius: 4px;
+/* pentru Chrome, Safari, Opera */
+.table-wrapper::-webkit-scrollbar,
+.app-content::-webkit-scrollbar {
+  display: none;
+}
+
+.table-wrapper > table {
+  background: transparent;     /* ca fundalul din .card să fie vizibil */
+  border-radius: inherit;      /* păstrează colțurile rotunjite ale wrapper-ului */
 }
 
 /* Buton verifică balanța */
@@ -136,3 +148,129 @@ tbody tr:hover {
   color: var(--accent);
   cursor: pointer;
 }
+
+.unit-toggle {
+  background: transparent;
+  border: 1px solid var(--accent);
+  border-radius: var(--border-radius);
+  padding: 0.2rem 0.4rem;
+  font-size: 0.75rem;
+  color: var(--accent);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.unit-toggle:hover {
+  background: var(--accent);
+  color: var(--bg-card);
+}
+
+/* 1. rând clicabil */
+.clickable-row {
+  cursor: pointer;
+}
+.clickable-row:hover {
+  background: rgba(0, 255, 163, 0.1);
+}
+
+/* Overlay full-screen */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+/* Modal aproape full-screen */
+.modal-content {
+  background: var(--bg-card);
+  color: var(--text-primary);
+  width: 900px;
+  height: 400px;
+  padding: 1.5rem;
+  border-radius: var(--border-radius);
+  overflow-y: auto;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7);
+}
+
+/* Titlu */
+.modal-content h3 {
+  margin-top: 0;
+  color: var(--accent);
+}
+
+/* Spațieri între rânduri */
+.tx-details p,
+.tx-details .balances p {
+  margin: 0.5rem 0;
+}
+
+
+/* Buton Închide */
+.modal-close {
+  margin-top: 1.5rem;
+  background: var(--accent);
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: var(--border-radius);
+  color: var(--bg-dark);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.modal-close:hover {
+  background: #00e493;
+}
+
+.col-type {
+  width: 200px;
+  white-space: nowrap;
+  overflow: visible;
+  text-overflow: ellipsis;
+  padding: 0.5rem;
+  text-align: left;
+}
+
+.dropdown-container {
+  position: relative;
+  display: inline-block;
+  margin-left: 0.5rem;
+}
+
+.type-menu {
+  position: absolute;
+  top: 110%;
+  left: 0;
+  background: var(--bg-card);
+  border: 1px solid var(--accent);
+  border-radius: var(--border-radius);
+  box-shadow: 0 4px 12px rgba(0, 255, 163, 0.3);
+  list-style: none;
+  margin: 0;
+  padding: 0.25rem 0;
+  z-index: 50;
+  min-width: 120px;
+}
+
+.type-menu li {
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.type-menu li:hover,
+.type-menu li.active {
+  background: var(--accent);
+  color: var(--bg-dark);
+}
+
+/* adaugă la finalul index.css */
+.app-content {
+  /* înlocuiește doar pe axis-ul vertical cu visible */
+  overflow-y: visible !important;
+}
+
+
+
