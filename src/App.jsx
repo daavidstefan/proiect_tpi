@@ -49,7 +49,7 @@ export default function App() {
     <div className="app-container">
       {/* HEADER FIX */}
       <header className="app-header">
-        <h1 className="app-title">proiect tpi</h1>
+        <h1 className="app-title">Solana Explorer</h1>
         <BlockDetails block={block} />
         <BalanceLookup />
       </header>
