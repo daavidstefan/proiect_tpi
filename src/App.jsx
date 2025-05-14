@@ -1,3 +1,4 @@
+// src/App.jsx
 import { useEffect, useState, useRef } from 'react';
 import { connection } from './assets/solana';
 import BlockDetails   from './components/BlockDetails.jsx';
@@ -12,14 +13,13 @@ export default function App() {
   const [transactions, setTxs]          = useState([]);
   const [running, setRunning]           = useState(true);
   const [searchSlot, setSearchSlot]     = useState('');
-  const [firstSlot, setFirstSlot]       = useState(0);       // <-- nou
+  const [firstSlot, setFirstSlot]       = useState(0);
 
   const intervalRef = useRef(null);
   const runningRef  = useRef(running);
-
   useEffect(() => { runningRef.current = running; }, [running]);
 
-  // 1) la mount, aflăm primul slot disponibil
+  // 1) aflăm primul slot disponibil
   useEffect(() => {
     (async () => {
       try {
@@ -55,14 +55,14 @@ export default function App() {
     return () => clearInterval(intervalRef.current);
   }, []);
 
-  // 3) când unpause, sărim la vârful istoriei
+  // 3) când “Run” devine true, salt la vârful istoriei
   useEffect(() => {
     if (running && history.length > 0) {
       setCurrentIndex(history.length - 1);
     }
   }, [running, history]);
 
-  // 4) fetch block+txs la schimbarea currentIndex
+  // 4) fetch block+txs la schimbarea index-ului
   useEffect(() => {
     if (currentIndex < 0 || currentIndex >= history.length) return;
     const slotNum = history[currentIndex];
@@ -82,6 +82,7 @@ export default function App() {
     })();
   }, [currentIndex, history]);
 
+  // ← Previous
   const goPrevious = () => {
     if (running) return;
     if (currentIndex > 0) {
@@ -93,6 +94,7 @@ export default function App() {
     }
   };
 
+  // → Next
   const goNext = () => {
     if (running) return;
     if (currentIndex < history.length - 1) {
@@ -100,12 +102,11 @@ export default function App() {
     }
   };
 
-  // 5) lookup handler cu noua limită
+  // Look-up handler
   const handleLookup = () => {
     const s   = Number(searchSlot);
     const tip = history.length ? history[history.length - 1] : 0;
     if (isNaN(s) || s < firstSlot || s > tip) return;
-
     setRunning(false);
     const idx = history.indexOf(s);
     if (idx !== -1) {
@@ -131,7 +132,7 @@ export default function App() {
           <BalanceLookup />
 
           <button
-            className="nav-btn"
+            className="unit-toggle"
             onClick={goPrevious}
             disabled={ running || (currentIndex <= 0 && history[0] <= firstSlot) }
           >
@@ -139,23 +140,23 @@ export default function App() {
           </button>
 
           <button
-            className="run-pause-btn"
+            className="unit-toggle"
             onClick={() => setRunning(r => !r)}
           >
             {running ? 'Pause' : 'Run'}
           </button>
 
           <button
-            className="nav-btn"
+            className="unit-toggle"
             onClick={goNext}
             disabled={ running || currentIndex >= history.length - 1 }
           >
             →
           </button>
 
-          {/* ── Search bar cu prima limită din rețea ── */}
-          <div className="block-search">
+          <div className="lookup-controls">
             <input
+              className="input-public-key"
               type="number"
               min={firstSlot}
               max={tip}
@@ -164,7 +165,7 @@ export default function App() {
               onChange={e => setSearchSlot(e.target.value)}
             />
             <button
-              className="lookup-btn"
+              className="unit-toggle"
               onClick={handleLookup}
               disabled={
                 searchSlot === '' ||
