@@ -21,12 +21,12 @@ export default function BalanceLookup() {
       <div className="lookup-controls">
         <input
           className="input-public-key"
-          placeholder="PublicKey Solana"
+          placeholder="Enter your key"
           value={addr}
           onChange={e => setAddr(e.target.value)}
         />
         <button className="unit-toggle" onClick={onCheck}>
-          Verifică balanța
+          Check balance
         </button>
       </div>
 
