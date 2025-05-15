@@ -187,6 +187,8 @@ tbody tr:hover {
   cursor: pointer;
   box-shadow: 0 4px 12px rgba(0,255,163,0.4);
   transition: transform var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast);
+  margin-left: 0.2rem;
+  margin-right: 0.2rem;
 }
 .unit-toggle:hover,
 .btn-check:hover {
