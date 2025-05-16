@@ -116,6 +116,7 @@ export default function App() {
           />
 
           <button
+            title="Go back one slot"
             className="unit-toggle"
             onClick={goPrevious}
             disabled={running || currentSlot <= firstSlot}
@@ -124,13 +125,15 @@ export default function App() {
           </button>
 
           <button
+            title="Resume/Pause live displaying of the slots"
             className="unit-toggle"
             onClick={() => setRunning(r => !r)}
           >
-            {running ? 'Pause' : 'Run'}
+            {running ? 'Pause' : 'Resume'}
           </button>
 
           <button
+            title="Go forward one slot"
             className="unit-toggle"
             onClick={goNext}
             disabled={running || currentSlot >= liveSlot}

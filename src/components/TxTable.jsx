@@ -89,7 +89,7 @@ export default function TxTable({ transactions = [] }) {
               <th className="col-type" style={{ position: 'relative', overflow: 'visible' }}>
                 TYPE&nbsp;
                 <button
-                  className="unit-toggle"
+                  className="run-pause-btn"
                   onClick={cycleFilter}
                   title="Click to cycle through types"
                   style={{ position: 'relative', zIndex: 1000 }}
@@ -104,10 +104,10 @@ export default function TxTable({ transactions = [] }) {
               <th className="col-fee" style={{ position: 'relative', overflow: 'visible' }}>
                 FEE&nbsp;
                 <button
-                  className="unit-toggle"
+                  className="run-pause-btn"
                   onClick={() => setShowSOLFee(!showSOLFee)}
                   style={{ position: 'relative', zIndex: 1000 }}
-                  title="Toggle Lamports / SOL"
+                  title="Display the fee in SOL/Lamports"
                 >
                   {showSOLFee ? 'SOL' : 'Lamports'}
                 </button>

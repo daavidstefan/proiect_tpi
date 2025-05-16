@@ -10,18 +10,42 @@ export default function BalanceLookup({
   minSlot,
   maxSlot
 }) {
-  const [addr, setAddr] = useState('');
-  const [bal, setBal]   = useState(null);
+  const [addr, setAddr]         = useState('');
+  const [bal, setBal]           = useState(null);
+  const [balError, setBalError] = useState('');
+  const [lookupError, setLookupError] = useState('');
 
-  // Check balance handler
+  // check wallet balance
   async function onCheck() {
     try {
       const pk  = new PublicKey(addr);
       const lam = await connection.getBalance(pk);
-      setBal((lam / 1e9).toFixed(9));
+      const sol = (lam / 1e9).toFixed(9);
+      setBal(sol);
+      setBalError('');
     } catch {
-      setBal('Adresă invalidă');
+      setBal(null);
+      setBalError('Invalid address');
     }
+  }
+
+  // slot‐number lookup with error messages
+  function handleLookup() {
+    const s = Number(slotValue);
+    if (slotValue === '' || isNaN(s)) {
+      setLookupError('Enter a valid slot number.');
+      return;
+    }
+    if (s < 0 || s > maxSlot) {
+      setLookupError('No number belongs to that slot.');
+      return;
+    }
+    if (s < minSlot) {
+      setLookupError('No data stored for that slot.');
+      return;
+    }
+    setLookupError('');
+    onLookupSlot();
   }
 
   return (
@@ -34,42 +58,39 @@ export default function BalanceLookup({
           value={addr}
           onChange={e => setAddr(e.target.value)}
         />
-        <button
-          className="unit-toggle"
-          onClick={onCheck}
-        >
+        <button className="run-pause-btn" onClick={onCheck}>
           Check balance
         </button>
       </div>
 
-      {bal !== null && (
-        <p className="lookup-result">
-          Balanță: {bal} SOL
-        </p>
-      )}
+      {balError ? (
+        <p className="lookup-result">{balError}</p>
+      ) : bal !== null ? (
+        <p className="lookup-result">Balance: {bal} SOL</p>
+      ) : null}
 
-      {/* slot lookup, reusing same classes */}
+      {/* slot‐number lookup only */}
       <div className="lookup-controls">
         <input
           className="input-public-key"
-          min={minSlot}
+          type="text"
+          min={0}
           max={maxSlot}
           placeholder={`Enter slot # (min. ${minSlot})`}
           value={slotValue}
-          onChange={e => setSlotValue(e.target.value)}
+          onChange={e => {
+            setSlotValue(e.target.value);
+            setLookupError('');
+          }}
         />
-        <button
-          className="unit-toggle"
-          onClick={onLookupSlot}
-          disabled={
-            slotValue === '' ||
-            Number(slotValue) < minSlot ||
-            Number(slotValue) > maxSlot
-          }
-        >
+        <button className="run-pause-btn" onClick={handleLookup}>
           Look-up
         </button>
       </div>
+
+      {lookupError && (
+        <p className="lookup-result">{lookupError}</p>
+      )}
     </div>
   );
 }
