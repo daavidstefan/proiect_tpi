@@ -1,7 +1,7 @@
 // src/components/BalanceLookup.jsx
 import { useState } from 'react';
 import { PublicKey } from '@solana/web3.js';
-import { connection } from '../assets/solana';
+import { useNetwork } from "../context/NetworkContext.jsx";
 
 export default function BalanceLookup({
   onLookupSlot,
@@ -10,18 +10,17 @@ export default function BalanceLookup({
   minSlot,
   maxSlot
 }) {
-  const [addr, setAddr]         = useState('');
-  const [bal, setBal]           = useState(null);
+  const { connection } = useNetwork();
+  const [addr, setAddr] = useState('');
+  const [bal, setBal] = useState(null);
   const [balError, setBalError] = useState('');
   const [lookupError, setLookupError] = useState('');
 
-  // check wallet balance
-  async function onCheck() {
+  async function onCheckBalance() {
     try {
-      const pk  = new PublicKey(addr);
-      const lam = await connection.getBalance(pk);
-      const sol = (lam / 1e9).toFixed(9);
-      setBal(sol);
+      const pk = new PublicKey(addr);
+      const lamports = await connection.getBalance(pk);
+      setBal((lamports / 1e9).toFixed(9));
       setBalError('');
     } catch {
       setBal(null);
@@ -29,68 +28,61 @@ export default function BalanceLookup({
     }
   }
 
-  // slot‐number lookup with error messages
   function handleLookup() {
     const s = Number(slotValue);
-    if (slotValue === '' || isNaN(s)) {
+    if (isNaN(s)) {
       setLookupError('Enter a valid slot number.');
       return;
     }
-    if (s < 0 || s > maxSlot) {
-      setLookupError('No number belongs to that slot.');
+    if (s < minSlot) {
+      setLookupError(`Slot too low (min ${minSlot}).`);
       return;
     }
-    if (s < minSlot) {
-      setLookupError('No data stored for that slot.');
+    if (maxSlot != null && s > maxSlot) {
+      setLookupError(`Slot too high (max ${maxSlot}).`);
       return;
     }
     setLookupError('');
-    onLookupSlot();
+    onLookupSlot(s);
   }
 
   return (
     <div className="balance-lookup">
-      {/* existing balance lookup */}
       <div className="lookup-controls">
         <input
-          className="input-public-key"
-          placeholder="Enter your key"
+          type="text"
+          placeholder="Enter your public key"
           value={addr}
           onChange={e => setAddr(e.target.value)}
+          className="input-public-key"
         />
-        <button className="run-pause-btn" onClick={onCheck}>
+        <button onClick={onCheckBalance} className="run-pause-btn">
           Check balance
         </button>
       </div>
-
-      {balError ? (
-        <p className="lookup-result">{balError}</p>
-      ) : bal !== null ? (
+      {balError && <p className="lookup-result">{balError}</p>}
+      {bal != null && !balError && (
         <p className="lookup-result">Balance: {bal} SOL</p>
-      ) : null}
+      )}
 
-      {/* slot‐number lookup only */}
       <div className="lookup-controls">
         <input
-          className="input-public-key"
-          type="text"
-          min={0}
+          type="number"
+          min={minSlot}
           max={maxSlot}
-          placeholder={`Enter slot # (min. ${minSlot})`}
+          placeholder={`Enter slot # (min ${minSlot})`}
           value={slotValue}
           onChange={e => {
             setSlotValue(e.target.value);
             setLookupError('');
           }}
+          className="input-public-key"
         />
-        <button className="run-pause-btn" onClick={handleLookup}>
+        <button onClick={handleLookup} className="run-pause-btn">
           Look-up
         </button>
       </div>
-
-      {lookupError && (
-        <p className="lookup-result">{lookupError}</p>
-      )}
+      {lookupError && <p className="lookup-result">{lookupError}</p>}
     </div>
   );
 }

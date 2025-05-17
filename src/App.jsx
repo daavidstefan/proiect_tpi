@@ -1,28 +1,23 @@
+// src/App.jsx
 import { useEffect, useState, useRef } from 'react';
-import { connection } from './assets/solana';
-import BlockDetails   from './components/BlockDetails.jsx';
-import TxTable        from './components/TxTable.jsx';
-import BalanceLookup  from './components/BalanceLookup.jsx';
+import { useNetwork } from './context/NetworkContext.jsx';
+import BlockDetails from './components/BlockDetails.jsx';
+import TxTable from './components/TxTable.jsx';
+import BalanceLookup from './components/BalanceLookup.jsx';
 import './App.css';
 
 export default function App() {
-  // slot-uri
-  const [liveSlot, setLiveSlot]     = useState(null);  // ultima valoare de pe reţea
-  const [currentSlot, setCurrentSlot]= useState(null);  // ce afişăm în UI
-  
-  // bloc + tranzacţii
-  const [block, setBlock]      = useState(null);
+  const { connection } = useNetwork();
+
+  const [liveSlot, setLiveSlot] = useState(null);
+  const [currentSlot, setCurrentSlot] = useState(null);
+  const [block, setBlock] = useState(null);
   const [transactions, setTxs] = useState([]);
-  
-  // run / pause
-  const [running, setRunning]  = useState(true);
-  
-  // prima limită (devnet prune)
-  const [firstSlot, setFirstSlot]= useState(0);
-  
+  const [running, setRunning] = useState(true);
+  const [firstSlot, setFirstSlot] = useState(0);
   const intervalRef = useRef(null);
 
-  // 1) aflăm primul slot disponibil la mount
+  // 1) Prima slot disponibil
   useEffect(() => {
     (async () => {
       try {
@@ -32,28 +27,25 @@ export default function App() {
         console.error(err);
       }
     })();
-  }, []);
+  }, [connection]);
 
-  // 2) polling permanent pentru liveSlot
+  // 2) Polling pentru slot curent
   useEffect(() => {
     const tick = async () => {
       try {
         const latest = await connection.getSlot();
         setLiveSlot(latest);
-        if (running) {
-          // dacă suntem în run, sincronizăm UI  
-          setCurrentSlot(latest);
-        }
+        if (running) setCurrentSlot(latest);
       } catch (err) {
         console.error(err);
       }
     };
-    tick();  
+    tick();
     intervalRef.current = setInterval(tick, 250);
     return () => clearInterval(intervalRef.current);
-  }, [running]);
+  }, [connection, running]);
 
-  // 3) de fiecare dată când se schimbă currentSlot, aducem block+txs
+  // 3) Când se schimbă currentSlot, aducem bloc și tranzacții
   useEffect(() => {
     if (currentSlot == null) return;
     (async () => {
@@ -70,33 +62,31 @@ export default function App() {
         console.error(err);
       }
     })();
-  }, [currentSlot]);
+  }, [connection, currentSlot]);
 
-  // săgeţi
+  // Navigare manuală
   const goPrevious = () => {
-    if (running) return;
-    if (currentSlot > firstSlot) {
-      setCurrentSlot(cs => cs - 1);
+    if (!running && currentSlot !== null && currentSlot > firstSlot) {
+      setCurrentSlot(prev => prev - 1);
     }
   };
-
   const goNext = () => {
-    if (running) return;
-    if (liveSlot != null && currentSlot < liveSlot) {
-      setCurrentSlot(cs => cs + 1);
+    if (!running && liveSlot !== null && currentSlot !== null && currentSlot < liveSlot) {
+      setCurrentSlot(prev => prev + 1);
     }
   };
 
-  // lookup thru BalanceLookup
+  // Lookup pe slot anume
   const [searchSlot, setSearchSlot] = useState('');
   const handleLookup = () => {
     const s = Number(searchSlot);
-    if (isNaN(s) || s < firstSlot || liveSlot == null || s > liveSlot) return;
+    if (isNaN(s) || s < firstSlot || (liveSlot !== null && s > liveSlot)) {
+      return; // sau afișezi eroare în UI
+    }
     setRunning(false);
     setCurrentSlot(s);
   };
 
-  // for input clamp
   const tip = liveSlot ?? 0;
 
   return (
@@ -107,7 +97,6 @@ export default function App() {
 
         <div className="balance-run">
           <BalanceLookup
-            // balance lookup stays unchanged
             slotValue={searchSlot}
             setSlotValue={setSearchSlot}
             minSlot={firstSlot}
@@ -115,31 +104,11 @@ export default function App() {
             onLookupSlot={handleLookup}
           />
 
-          <button
-            title="Go back one slot"
-            className="unit-toggle"
-            onClick={goPrevious}
-            disabled={running || currentSlot <= firstSlot}
-          >
-            ←
-          </button>
-
-          <button
-            title="Resume/Pause live displaying of the slots"
-            className="unit-toggle"
-            onClick={() => setRunning(r => !r)}
-          >
+          <button onClick={goPrevious} className="unit-toggle" disabled={running || (currentSlot ?? 0) <= firstSlot}>←</button>
+          <button onClick={() => setRunning(r => !r)} className="unit-toggle">
             {running ? 'Pause' : 'Resume'}
           </button>
-
-          <button
-            title="Go forward one slot"
-            className="unit-toggle"
-            onClick={goNext}
-            disabled={running || currentSlot >= liveSlot}
-          >
-            →
-          </button>
+          <button onClick={goNext} className="unit-toggle" disabled={running || (currentSlot ?? 0) >= (liveSlot ?? 0)}>→</button>
         </div>
       </header>
 
