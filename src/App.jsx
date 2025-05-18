@@ -92,7 +92,7 @@ export default function App() {
   return (
     <div className="app-container">
       <header className="app-header">
-        <h1 className="app-title">Solana Explorer</h1>
+        <h1 className="app-title text-2xl font-semibold mb-4 text-green-300 text-center font-mono">Solana Explorer</h1>
         <BlockDetails block={block} />
 
         <div className="balance-run">
@@ -104,11 +104,11 @@ export default function App() {
             onLookupSlot={handleLookup}
           />
 
-          <button onClick={goPrevious} className="unit-toggle" disabled={running || (currentSlot ?? 0) <= firstSlot}>←</button>
+          <button onClick={goPrevious} className="unit-toggle font-mono" disabled={running || (currentSlot ?? 0) <= firstSlot}> {"<"} </button>
           <button onClick={() => setRunning(r => !r)} className="unit-toggle">
             {running ? 'Pause' : 'Resume'}
           </button>
-          <button onClick={goNext} className="unit-toggle" disabled={running || (currentSlot ?? 0) >= (liveSlot ?? 0)}>→</button>
+          <button onClick={goNext} className="unit-toggle font-mono" disabled={running || (currentSlot ?? 0) >= (liveSlot ?? 0)}> {">"} </button>
         </div>
       </header>
 

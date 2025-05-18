@@ -22,24 +22,30 @@ export default function Home() {
     return () => { mounted = false };
   }, [connection]);
 
-  if (error) return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-900 text-red-500">
-      <p>Error loading validators: {error}</p>
-    </div>
-  );
-  if (!validators.length) return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-900 text-green-300">
-      <p>Loading validators…</p>
-    </div>
-  );
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-900 text-red-500">
+        <p>Error loading validators: {error}</p>
+      </div>
+    );
+  }
+  if (!validators.length) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-900 text-green-300">
+        <p>Loading validators…</p>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-gray-900 p-6 text-gray-200">
-      <h2 className="text-2xl font-semibold mb-4 text-green-300">
+    // Folosim container-ul .app-content (background #111, colțuri rotunjite, padding)
+    <main className="app-content min-h-screen flex flex-col">
+      <h2 className="text-2xl font-semibold mb-4 text-green-300 text-center font-mono">
         Validators on {network.charAt(0).toUpperCase() + network.slice(1)}
       </h2>
 
-      <div className="table-wrapper card">
+      {/* Wrapper-ul .table-wrapper.card aduce fundal negru, colțuri și umbră */}
+      <div className="table-wrapper card flex-1">
         <table>
           <thead>
             <tr>
@@ -59,6 +65,6 @@ export default function Home() {
           </tbody>
         </table>
       </div>
-    </div>
+    </main>
   );
 }

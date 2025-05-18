@@ -47,8 +47,8 @@ export default function BalanceLookup({
   }
 
   return (
-    <div className="balance-lookup">
-      <div className="lookup-controls">
+    <div className="balance-lookup font-mono">
+      <div className="lookup-controls font-mono">
         <input
           type="text"
           placeholder="Enter your public key"
@@ -67,7 +67,7 @@ export default function BalanceLookup({
 
       <div className="lookup-controls">
         <input
-          type="number"
+          type="text"
           min={minSlot}
           max={maxSlot}
           placeholder={`Enter slot # (min ${minSlot})`}
@@ -76,9 +76,9 @@ export default function BalanceLookup({
             setSlotValue(e.target.value);
             setLookupError('');
           }}
-          className="input-public-key"
+          className="input-public-key font-mono"
         />
-        <button onClick={handleLookup} className="run-pause-btn">
+        <button onClick={handleLookup} className="run-pause-btn font-mono">
           Look-up
         </button>
       </div>

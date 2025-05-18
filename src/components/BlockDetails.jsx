@@ -10,7 +10,7 @@ export default function BlockDetails({ block }) {
   } = block;
 
   return (
-    <div className="block-details card">
+    <div className="block-details card font-mono">
       <h2 className="block-title">Bloc #{slot}</h2>
       <div className="block-info">
         <div className="block-info-item">

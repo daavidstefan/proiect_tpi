@@ -89,7 +89,7 @@ export default function TxTable({ transactions = [] }) {
               <th className="col-type" style={{ position: 'relative', overflow: 'visible' }}>
                 TYPE&nbsp;
                 <button
-                  className="run-pause-btn"
+                  className="run-pause-btn font-mono"
                   onClick={cycleFilter}
                   title="Click to cycle through types"
                   style={{ position: 'relative', zIndex: 1000 }}
@@ -104,7 +104,7 @@ export default function TxTable({ transactions = [] }) {
               <th className="col-fee" style={{ position: 'relative', overflow: 'visible' }}>
                 FEE&nbsp;
                 <button
-                  className="run-pause-btn"
+                  className="run-pause-btn font-mono"
                   onClick={() => setShowSOLFee(!showSOLFee)}
                   style={{ position: 'relative', zIndex: 1000 }}
                   title="Display the fee in SOL/Lamports"
@@ -128,12 +128,12 @@ export default function TxTable({ transactions = [] }) {
                   className="clickable-row"
                   onClick={() => setSelectedTx(tx)}
                 >
-                  <td className="col-type">{tx.typeLabel}</td>
-                  <td className="col-signature">{tx.sig.slice(0, 8)}…</td>
-                  <td className="col-from">{tx.fromFull.slice(0, 8)}…</td>
-                  <td className="col-to">{tx.toFull.slice(0, 8)}…</td>
-                  <td className="col-amount">{tx.solAmount}</td>
-                  <td className="col-fee">
+                  <td className="col-type font-mono">{tx.typeLabel}</td>
+                  <td className="col-signature font-mono">{tx.sig.slice(0, 8)}…</td>
+                  <td className="col-from font-mono">{tx.fromFull.slice(0, 8)}…</td>
+                  <td className="col-to font-mono">{tx.toFull.slice(0, 8)}…</td>
+                  <td className="col-amount font-mono">{tx.solAmount}</td>
+                  <td className="col-fee font-mono">
                     {showSOLFee
                       ? (tx.feeValue / LAMPORTS_PER_SOL).toFixed(9)
                       : tx.feeValue.toLocaleString()}
